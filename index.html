@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>GifTastic</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    
+</head>
+
+<body>
+  <div class="container">
+    <h1><u>Emojis</u></h1>
+ <div id="buttons" class="col-sm-12"></div>
+ <div class="col-sm-12">
+  <div id="gifs-appear-here" class="col-sm-8"></div>
+    <div id = "search" class="col-sm-4">
+       <form id="form">
+                <label id="searchBox" for="emojiSearch">Please enter your emoji</label>
+                <input type="text" class="form-control" id="emoji">
+                <br>
+                <br>
+            </form>
+            <button onclick="submit()" type="button" id="submit" class="btn btn-success">Submit</button>
+            <br>
+            <br>
+    </div>
+  </div>
+</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    
+   
+    var topics = ["emoji", "joy", "smirk", "heart", "yum"];
+    
+
+$(document).ready(function() {
+    for (var i = 0; i < topics.length; i++) {
+        $("#buttons").append("<button type='button' onclick='find(\"" + topics[i] + "\")' class='btn btn-success' value=' " + topics[i] + "'> " + topics[i] + " </button>");
+    }
+});
+
+
+function submit() {
+    var userInput = $('#emoji').val();
+
+    if (userInput) {
+        $('#buttons').append("<button type='button' onclick='find(\"" + userInput + "\")' class='btn btn-success' value=' " + userInput + "'> " + userInput + " </button>");
+    }
+}
+
+function find(giphy) {
+    $.ajax({
+            url: 
+ 'https://api.giphy.com/v1/gifs/search?q= ' + giphy + ' &api_key=c80c9b9820a4488f9c3f459d0cc6af6f',
+            type: 'GET',
+        })
+        .done(function(response) {
+            displayGif(response);
+        })
+}
+
+function displayGif(response) {
+    $('#gifs-appear-here').empty();
+    for (var i = 0; i < response.data.length; i++) {
+        var rating = "<div class='ratings'> Rating:  " + (response.data[i].rating) + " </div>";
+        var image = rating + '<img src= " ' + response.data[i].images.fixed_height_still.url +
+            '" data-still=" ' + response.data[i].images.fixed_height_still.url +
+            ' " data-animate=" ' + response.data[i].images.fixed_height.url + '" data-state="still" class="movImage" style= "width:200px; height:200px">';
+
+        image = '<div class="col-sm-4">' + image + "</div>";
+        $('#gifs-appear-here').append(image);
+    }
+
+    $('.movImage').on('click', function() {
+        var state = $(this).attr('data-state');
+        if (state == 'still') {
+            $(this).attr('src', $(this).attr("data-animate"));
+            $(this).attr('data-state', 'animate');
+        } else {
+            $(this).attr('src', $(this).attr("data-still"));
+            $(this).attr('data-state', 'still');
+        }
+
+    });
+}
+
+
+
+
+ 
+
+             
+              
+
+
+
+
+
+  </script>
+</body>
+
+</html>
